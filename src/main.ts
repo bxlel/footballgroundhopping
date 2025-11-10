@@ -1,4 +1,4 @@
-import 'zone.js'; // ? requis en config non-zoneless
+import 'zone.js';
 
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';

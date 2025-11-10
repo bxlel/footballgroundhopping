@@ -43,7 +43,7 @@ export class FiltersPanelComponent {
           .filter((name) => !!name)
           .map((name) => ({
             label: name,
-            value: name, // on filtre ensuite par league.country === name
+            value: name, 
           }));
 
         this.countries.set(mapped);
