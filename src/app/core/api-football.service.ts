@@ -1,5 +1,3 @@
-// src/app/core/api-football.service.ts
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filters, MatchLite } from './models';
@@ -39,12 +37,18 @@ interface ApiFootballCountriesResponse {
 
 @Injectable({ providedIn: 'root' })
 export class ApiFootballService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
-  private readonly baseUrl =
-    environment.apiFootballBaseUrl || '/.netlify/functions/api-football';
+  // AUCUN fallback ici. Tu forces l'usage de la Netlify Function.
+  private readonly baseUrl = environment.apiFootballBaseUrl;
 
+  /** Get list of countries (via Netlify function) */
   getCountries(): Observable<string[]> {
+    if (!this.baseUrl) {
+      console.error('[ApiFootball] baseUrl is not set');
+      return of([]);
+    }
+
     return this.http
       .get<ApiFootballCountriesResponse>(`${this.baseUrl}/countries`)
       .pipe(
@@ -58,6 +62,7 @@ export class ApiFootballService {
       );
   }
 
+  /** Search fixtures by date range + optional country */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
     const { dateFrom, dateTo, country } = filters;
 
@@ -69,6 +74,11 @@ export class ApiFootballService {
     const dates = this.buildDateRange(dateFrom, dateTo);
     if (!dates.length) {
       console.warn('[ApiFootball] Invalid date range', { dateFrom, dateTo });
+      return of([]);
+    }
+
+    if (!this.baseUrl) {
+      console.error('[ApiFootball] baseUrl is not set');
       return of([]);
     }
 
