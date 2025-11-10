@@ -1,4 +1,4 @@
-// netlify/functions/features.js
+// netlify/functions/api-football.js
 
 const BASE_URL = 'https://v3.football.api-sports.io';
 
@@ -7,14 +7,16 @@ export async function handler(event) {
     const apiKey = process.env.API_FOOTBALL_KEY;
 
     if (!apiKey) {
-      console.error('[features] Missing API_FOOTBALL_KEY');
+      console.error('[api-football] Missing API_FOOTBALL_KEY');
       return {
         statusCode: 500,
         body: JSON.stringify({ error: 'Missing server API key' }),
       };
     }
 
-    const functionPrefix = '/.netlify/functions/features';
+    // Ex: /.netlify/functions/api-football/countries
+    //     /.netlify/functions/api-football/fixtures
+    const functionPrefix = '/.netlify/functions/api-football';
     const fullPath = event.path || '';
     const subPath = fullPath.startsWith(functionPrefix)
       ? fullPath.slice(functionPrefix.length)
@@ -23,16 +25,14 @@ export async function handler(event) {
     let targetPath = '';
 
     if (subPath.startsWith('/countries')) {
-      // GET /features/countries -> /countries
       targetPath = '/countries';
     } else if (subPath.startsWith('/fixtures')) {
-      // GET /features/fixtures -> /fixtures
       targetPath = '/fixtures';
     } else {
-      console.warn('[features] Unknown subPath:', subPath);
+      console.warn('[api-football] Unknown subPath:', subPath);
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: 'Unknown features route' }),
+        body: JSON.stringify({ error: 'Unknown api-football route' }),
       };
     }
 
@@ -58,7 +58,7 @@ export async function handler(event) {
       },
     };
   } catch (err) {
-    console.error('[features] Error', err);
+    console.error('[api-football] Error', err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Internal server error' }),

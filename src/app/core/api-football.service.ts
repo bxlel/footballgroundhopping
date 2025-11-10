@@ -1,3 +1,5 @@
+// src/app/core/api-football.service.ts
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filters, MatchLite } from './models';
@@ -11,7 +13,7 @@ interface ApiFootballFixtureResponse {
 interface ApiFootballFixture {
   fixture: {
     id: number;
-    date: string; // ISO
+    date: string;
     venue: {
       name: string | null;
       city: string | null;
@@ -39,11 +41,9 @@ interface ApiFootballCountriesResponse {
 export class ApiFootballService {
   private http = inject(HttpClient);
 
-  // Utilise la Netlify Function "features"
   private readonly baseUrl =
-    environment.apiFootballBaseUrl || '/.netlify/functions/features';
+    environment.apiFootballBaseUrl || '/.netlify/functions/api-football';
 
-  /** Get list of countries */
   getCountries(): Observable<string[]> {
     return this.http
       .get<ApiFootballCountriesResponse>(`${this.baseUrl}/countries`)
@@ -58,7 +58,6 @@ export class ApiFootballService {
       );
   }
 
-  /** Search fixtures by date range + optional country */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
     const { dateFrom, dateTo, country } = filters;
 
