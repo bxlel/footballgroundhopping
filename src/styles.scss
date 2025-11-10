@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@500;700&display=swap');
+
+@import 'leaflet/dist/leaflet.css';
+@import 'styles/tokens';
+@import 'styles/reset';
+@import 'styles/global-bg';
+
+/* Utilitaires */
+.container {
+  width: min(1200px, 92vw);
+  margin-inline: auto;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-1);
+  backdrop-filter: saturate(1.1) blur(6px);
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, var(--accent-1), #1b9edb);
+  color: #041018; font-weight: 700; box-shadow: var(--shadow-2);
+  cursor: pointer; transition: transform .08s ease, filter .2s ease;
+  &:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  &:active { transform: translateY(0); filter: brightness(.98); }
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border-radius: 999px;
+  background: rgba(67,199,255,.15); color: var(--accent-1);
+  border: 1px solid rgba(67,199,255,.35);
+  font-weight: 600; font-size: 12px;
+}
+

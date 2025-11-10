@@ -1,0 +1,56 @@
+/* ===== Design Tokens (Football GH) ===== */
+:root {
+  /* Brand */
+  --brand-900: #0e2a47;  /* navy */
+  --brand-700: #1a3d5f;
+  --brand-500: #26486e;  /* denim (déjà utilisé) */
+  --brand-300: #84a2c4;
+  --brand-100: #e7effa;
+
+  /* Accents */
+  --accent-1: #43c7ff;  /* cyan */
+  --accent-2: #2ee6a6;  /* mint/green */
+
+  /* Feedback */
+  --ok: #22c55e;
+  --warn: #f59e0b;
+  --err: #ef4444;
+
+  /* Neutrals */
+  --bg: #0b1220;       /* deep bg */
+  --panel: #101a2b;    /* cards */
+  --panel-2: #0f1626;  /* alt panel */
+  --text: #eaf2ff;     /* primary text */
+  --muted: #a6b3c6;    /* secondary text */
+  --border: #233048;   /* subtle border */
+
+  /* Shadows */
+  --shadow-1: 0 10px 25px rgba(0,0,0,.25);
+  --shadow-2: 0 16px 40px rgba(10, 26, 60, .45);
+
+  /* Radii & spacing */
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-6: 24px;
+
+  /* Typography */
+  --font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  --font-heading: "Outfit", var(--font-ui);
+}
+
+/* Light mode option (si besoin plus tard) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --panel-2: #f3f6fb;
+    --text: #0e1726;
+    --muted: #475569;
+    --border: #dbe3f1;
+  }
+}

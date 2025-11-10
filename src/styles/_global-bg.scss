@@ -1,0 +1,14 @@
+/* Fond gradient "stadium night" + légère texture */
+.global-bg {
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(67,199,255,.18), transparent 60%),
+    radial-gradient(1000px 500px at 80% 20%, rgba(46,230,166,.15), transparent 65%),
+    radial-gradient(1000px 800px at 50% 100%, rgba(38,72,110,.55), transparent 70%),
+    linear-gradient(180deg, #0a1322 0%, #0b1220 60%, #0b1220 100%);
+  &::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='.12'%3E%3Ccircle cx='0' cy='0' r='0.5'/%3E%3C/g%3E%3C/svg%3E");
+    mix-blend-mode: overlay; opacity: .25;
+  }
+}

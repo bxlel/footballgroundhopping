@@ -1,0 +1,77 @@
+<section class="page">
+  <div class="container">
+    <app-filters-panel></app-filters-panel>
+
+    <div class="helper">
+      @if (store.loading()) {
+        Chargement…
+      } @else if (store.error()) {
+        {{ store.error() }}
+      } @else {
+        @if (info().from && info().to) {
+          <span class="pill">
+            Période : {{ info().from }} → {{ info().to }}
+          </span>
+        }
+        @if (info().country) {
+          <span class="pill">
+            Pays : {{ info().country }}
+          </span>
+        }
+        @if (info().city) {
+          <span class="pill">
+            Ville : {{ info().city }}
+          </span>
+        }
+        <span class="pill strong">
+          Résultats : {{ info().count }}
+        </span>
+      }
+    </div>
+
+    <div class="content">
+      @if (store.counts().length) {
+        <aside class="left card">
+          <h3>Matches par ville</h3>
+          <ul class="city-list">
+            @for (c of store.counts(); track c.city) {
+              <li>
+                <span class="city">{{ c.city }}</span>
+                <span class="badge">{{ c.count }}</span>
+              </li>
+            }
+          </ul>
+        </aside>
+      }
+
+      <main class="right card">
+        <h3>Matches</h3>
+
+        @if (store.list().length) {
+          <ul class="match-list">
+            @for (m of store.list(); track m.id) {
+              <li>
+                <div class="when">
+                  {{ fmtDateTime(m.iso, m.date, m.time) }}
+                </div>
+                <div class="who">
+                  {{ m.home }} <span class="vs">vs</span> {{ m.away }}
+                </div>
+                <div class="meta">
+                  @if (m.league) { <span class="pill">{{ m.league }}</span> }
+                  @if (m.venue)  { <span class="pill">{{ m.venue }}</span> }
+                  @if (m.city)   { <span class="pill">{{ m.city }}</span> }
+                  @if (m.country){ <span class="pill">{{ m.country }}</span> }
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="empty">
+            Aucun résultat pour cette recherche.
+          </div>
+        }
+      </main>
+    </div>
+  </div>
+</section>

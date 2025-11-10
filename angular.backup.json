@@ -33,9 +33,13 @@
               "src/favicon.ico"
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/leaflet/dist/leaflet.css"
-            ]
+              "src/styles.scss"
+            ],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -51,7 +55,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "outputMode": "server"
             },
             "development": {
               "optimization": false,
@@ -64,9 +69,6 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "proxyConfig": "proxy.conf.json"
-          },
           "configurations": {
             "production": {
               "buildTarget": "football-gh:build:production"
@@ -92,8 +94,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/leaflet/dist/leaflet.css"
+              "src/styles.scss"
             ]
           }
         }

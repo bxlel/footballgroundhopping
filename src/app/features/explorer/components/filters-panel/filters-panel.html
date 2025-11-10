@@ -1,0 +1,77 @@
+<!-- src/app/features/home/components/filters-panel/filters-panel.html -->
+
+<form class="filters-panel" (submit)="onSubmit($event)">
+  <div class="filters-header">
+    <div class="title">Trouve ton match</div>
+    <div class="subtitle">
+      Choisis tes dates, ton pays et ta ville pour explorer les matches disponibles.
+    </div>
+  </div>
+
+  <div class="fields">
+    <!-- Du -->
+    <div class="field">
+      <label for="dateFrom">Du</label>
+      <input
+        id="dateFrom"
+        type="date"
+        [value]="dateFrom()"
+        (change)="onFrom($any($event.target).value)"
+        required
+      />
+    </div>
+
+    <!-- Au -->
+    <div class="field">
+      <label for="dateTo">Au</label>
+      <input
+        id="dateTo"
+        type="date"
+        [value]="dateTo()"
+        (change)="onTo($any($event.target).value)"
+        required
+      />
+    </div>
+
+    <!-- Pays -->
+    <div class="field">
+      <label for="country">Pays (obligatoire)</label>
+      <select
+        id="country"
+        [value]="country()"
+        (change)="onCountry($any($event.target).value)"
+        name="country"
+        required
+      >
+        <option value="" disabled>Choisissez un pays</option>
+        <option *ngFor="let c of countries()" [value]="c.value">
+          {{ c.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Ville -->
+    <div class="field">
+      <label for="city">Ville (optionnel)</label>
+      <input
+        id="city"
+        type="text"
+        placeholder="Paris, Lyon, Marseille..."
+        [value]="city()"
+        (input)="onCity($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="submit" class="btn primary">Rechercher</button>
+    <button type="button" class="btn ghost" (click)="onReset()">
+      Réinitialiser
+    </button>
+  </div>
+
+   <p class="disclaimer">
+    Données fournies par l’API-FOOTBALL (offre gratuite)&nbsp;: certaines compétitions,
+    périodes ou le volume de requêtes peuvent être limités.
+  </p>
+</form>

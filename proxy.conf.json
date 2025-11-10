@@ -1,0 +1,29 @@
+{
+  "/api-football": {
+    "target": "https://v3.football.api-sports.io",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api-football": ""
+    }
+  },
+  "/tsdb": {
+    "target": "https://www.thesportsdb.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "info",
+    "pathRewrite": {
+      "^/tsdb": ""
+    }
+  },
+  "/osm": {
+    "target": "https://nominatim.openstreetmap.org",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "info",
+    "pathRewrite": {
+      "^/osm": ""
+    }
+  }
+}

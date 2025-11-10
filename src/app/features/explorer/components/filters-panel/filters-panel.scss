@@ -1,0 +1,186 @@
+.filters-panel {
+  position: relative;
+  margin-bottom: 10px;
+  padding: 18px 20px 14px;
+  border-radius: 24px;
+  border: 1px solid rgba(123, 144, 255, 0.28);
+
+  /* Même effet glass que le bouton home */
+  background:
+    radial-gradient(circle at top left, rgba(95, 168, 255, 0.18), transparent),
+    radial-gradient(circle at bottom right, rgba(176, 98, 255, 0.14), transparent),
+    rgba(5, 9, 20, 0.82);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: 0 12px 30px rgba(3, 7, 18, 0.9);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  .filters-header {
+    text-align: center;
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--ink-strong);
+    }
+
+    .subtitle {
+      margin-top: 2px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: 150px 150px minmax(180px, 1.4fr) minmax(160px, 1.2fr);
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: rgba(156, 163, 175, 0.96);
+    }
+
+    input,
+    select {
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background:
+        radial-gradient(circle at top left, rgba(95, 168, 255, 0.10), transparent),
+        rgba(3, 7, 18, 0.96);
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.16s ease;
+      box-shadow: 0 6px 12px rgba(3, 7, 18, 0.8);
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 26px;
+      border-radius: 14px;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(95, 168, 255, 0.25),
+        transparent
+      );
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 10px 6px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--brand-2);
+      box-shadow:
+        0 0 0 1px rgba(124, 123, 255, 0.35),
+        0 10px 20px rgba(3, 7, 18, 0.95);
+      background:
+        radial-gradient(circle at top left, rgba(176, 98, 255, 0.14), transparent),
+        rgba(2, 6, 23, 0.99);
+    }
+  }
+
+  /* ===== Actions + bouton ===== */
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .btn {
+    height: 42px;
+    padding: 0 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.16s ease;
+  }
+
+  /* 🌈 Même bouton que sur la page d'accueil */
+  .btn.primary {
+    color: #ffffff;
+    background: linear-gradient(135deg, #5fa8ff, #b062ff);
+    box-shadow:
+      0 6px 20px rgba(95, 168, 255, 0.4),
+      0 0 22px rgba(176, 98, 255, 0.25),
+      inset 0 0 1px rgba(255, 255, 255, 0.15);
+    border: none;
+  }
+
+  .btn.primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      0 8px 24px rgba(95, 168, 255, 0.5),
+      0 0 26px rgba(176, 98, 255, 0.35);
+  }
+
+  .btn.primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn.ghost {
+    color: var(--ink);
+    background: transparent;
+    border-color: rgba(148, 163, 253, 0.35);
+  }
+
+  .btn.ghost:hover {
+    background: rgba(15, 23, 42, 0.96);
+  }
+
+  /* Disclaimer toujours visible */
+  .disclaimer {
+    margin-top: 6px;
+    font-size: 0.7rem;
+    color: rgba(148, 163, 253, 0.7);
+    text-align: right;
+  }
+
+  @media (max-width: 1024px) {
+    .fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    padding: 14px 12px 10px;
+    border-radius: 18px;
+
+    .fields {
+      grid-template-columns: 1fr;
+    }
+
+    .actions {
+      margin-top: 6px;
+    }
+  }
+}

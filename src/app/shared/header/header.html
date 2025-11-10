@@ -1,0 +1,44 @@
+<header class="site-header" [class.compact]="scrolled()">
+  <div class="header-inner">
+    <!-- Brand -->
+    <a class="brand" routerLink="/" (click)="closeMenu()">
+      <img src="assets/logo.png" alt="Spot the Game" class="brand-logo" />
+      <div class="brand-text">
+        <div class="brand-title">Spot the Game</div>
+        <div class="brand-sub">Football Groundhopping</div>
+      </div>
+    </a>
+
+    <!-- Nav -->
+    <nav class="nav" [class.open]="menuOpen()">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+        class="nav-link"
+      >
+        Accueil
+      </a>
+      <a
+        routerLink="/explorer"
+        routerLinkActive="active"
+        (click)="closeMenu()"
+        class="nav-link"
+      >
+        Explorer
+      </a>
+    </nav>
+
+    <!-- Burger -->
+    <button
+      class="burger"
+      type="button"
+      (click)="toggleMenu()"
+      [class.open]="menuOpen()"
+      aria-label="Menu"
+    >
+      <span></span>
+    </button>
+  </div>
+</header>

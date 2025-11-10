@@ -1,12 +1,17 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './shared/header/header';
+import { FooterComponent } from './shared/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
+  template: `
+    <app-header></app-header>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+  `,
 })
-export class App {
-  protected readonly title = signal('football-gh');
-}
+export class AppComponent {}
