@@ -1,5 +1,3 @@
-// src/app/core/api-football.service.ts
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filters, MatchLite } from './models';
@@ -41,26 +39,18 @@ interface ApiFootballCountriesResponse {
 export class ApiFootballService {
   private http = inject(HttpClient);
 
-  /**
-   * Backend proxy:
-   * En prod (Netlify), on passe par la Function:
-   *   /.netlify/functions/api-football
-   *
-   * On laisse configurable via environment pour garder la flexibilité.
-   */
+  // Utilise la Netlify Function "features"
   private readonly baseUrl =
-    environment.apiFootballBaseUrl || '/.netlify/functions/api-football';
+    environment.apiFootballBaseUrl || '/.netlify/functions/features';
 
-  /** Get list of countries (proxied via Netlify Function) */
+  /** Get list of countries */
   getCountries(): Observable<string[]> {
-    // Ici, plus de clé côté front.
     return this.http
       .get<ApiFootballCountriesResponse>(`${this.baseUrl}/countries`)
       .pipe(
         map((res) => {
           const names =
             res?.response?.map((c) => c.name).filter(Boolean) ?? [];
-
           return Array.from(new Set(names)).sort((a, b) =>
             a.localeCompare(b)
           );
@@ -68,7 +58,7 @@ export class ApiFootballService {
       );
   }
 
-  /** Search fixtures by date range + optional country (via backend proxy) */
+  /** Search fixtures by date range + optional country */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
     const { dateFrom, dateTo, country } = filters;
 
@@ -83,7 +73,6 @@ export class ApiFootballService {
       return of([]);
     }
 
-    // On limite à 14 jours comme avant
     const safeDates = dates.slice(0, 14);
 
     const requests = safeDates.map((d) => {
@@ -91,7 +80,6 @@ export class ApiFootballService {
         .set('date', d)
         .set('timezone', 'Europe/Paris');
 
-      // Option 1 : filtrage pays côté backend (on passe le param)
       if (country && country.trim()) {
         params = params.set('country', country.trim());
       }
@@ -122,7 +110,6 @@ export class ApiFootballService {
           };
         });
 
-        // Option 2 : garde aussi un filtre pays côté front au cas où
         const filtered =
           country && country.trim()
             ? mapped.filter(
@@ -139,7 +126,6 @@ export class ApiFootballService {
     );
   }
 
-  /** Build dates between from and to (inclusive) in yyyy-MM-dd */
   private buildDateRange(from: string, to: string): string[] {
     const start = new Date(from);
     const end = new Date(to);

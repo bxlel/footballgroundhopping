@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  apiFootballBaseUrl: '/.netlify/functions/api-football',
+  production: false,
+  apiFootballBaseUrl: '/.netlify/functions/features',
 };
