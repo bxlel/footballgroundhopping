@@ -7,7 +7,6 @@
   </div>
 
   <div class="fields">
-    <!-- Du -->
     <div class="field">
       <label for="dateFrom">Du</label>
       <input
@@ -19,7 +18,6 @@
       />
     </div>
 
-    <!-- Au -->
     <div class="field">
       <label for="dateTo">Au</label>
       <input
@@ -31,24 +29,21 @@
       />
     </div>
 
-    <!-- Pays -->
     <div class="field">
-      <label for="country">Pays (obligatoire)</label>
+      <label for="country">Pays</label>
       <select
         id="country"
         [value]="country()"
         (change)="onCountry($any($event.target).value)"
         name="country"
-        required
       >
-        <option value="" disabled>Choisissez un pays</option>
+        <option value="">Tous les pays</option>
         <option *ngFor="let c of countries()" [value]="c.value">
           {{ c.label }}
         </option>
       </select>
     </div>
 
-    <!-- Ville -->
     <div class="field">
       <label for="city">Ville (optionnel)</label>
       <input

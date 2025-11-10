@@ -7,7 +7,6 @@ import { Filters, MatchLite, CityCount, SearchInfo } from './models';
 export class MatchesStoreService {
   private readonly api = inject(ApiFootballService);
 
-  // ========== État filtres ==========
   private readonly _filters = signal<Filters>({
     dateFrom: null,
     dateTo: null,
@@ -15,13 +14,14 @@ export class MatchesStoreService {
     city: '',
   });
 
-  // ========== État données ==========
   private readonly _matches = signal<MatchLite[]>([]);
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
   private readonly _info = signal<SearchInfo>({ count: 0 });
 
-  // ========== Getters publics ==========
+  constructor() {
+    console.log('[MatchesStore] init with filters', this._filters());
+  }
 
   filters(): Filters {
     return this._filters();
@@ -47,33 +47,38 @@ export class MatchesStoreService {
       map.set(key, (map.get(key) ?? 0) + 1);
     }
 
-    return Array.from(map.entries())
+    const arr = Array.from(map.entries())
       .map(([city, count]) => ({ city, count }))
       .sort((a, b) => b.count - a.count);
+
+    console.log('[MatchesStore] counts computed:', arr);
+    return arr;
   }
 
   info(): SearchInfo {
     return this._info();
   }
 
-  // ========== Mises à jour filtres ==========
-
   updateDateFrom(dateFrom: string | null) {
+    console.log('[MatchesStore] updateDateFrom:', dateFrom);
     this._filters.update((f) => ({ ...f, dateFrom: dateFrom || null }));
     this.syncInfo();
   }
 
   updateDateTo(dateTo: string | null) {
+    console.log('[MatchesStore] updateDateTo:', dateTo);
     this._filters.update((f) => ({ ...f, dateTo: dateTo || null }));
     this.syncInfo();
   }
 
   updateCountry(country: string) {
+    console.log('[MatchesStore] updateCountry:', country);
     this._filters.update((f) => ({ ...f, country: country.trim() }));
     this.syncInfo();
   }
 
   updateCity(city: string | null | undefined) {
+    console.log('[MatchesStore] updateCity:', city);
     this._filters.update((f) => ({
       ...f,
       city: city?.trim() || '',
@@ -82,6 +87,7 @@ export class MatchesStoreService {
   }
 
   reset() {
+    console.log('[MatchesStore] reset() called');
     this._filters.set({
       dateFrom: null,
       dateTo: null,
@@ -97,29 +103,38 @@ export class MatchesStoreService {
     this.syncInfo();
   }
 
-  // ========== Action: lancer la recherche ==========
-
   searchNow() {
     const f = this._filters();
+    console.log('[MatchesStore] searchNow with filters', f);
 
-    if (!f.dateFrom || !f.dateTo || !f.country) {
-      this._error.set('Merci de renseigner une période et un pays.');
-      console.warn('[MatchesStore] searchNow blocked - missing filters', f);
+    if (!f.dateFrom || !f.dateTo) {
+      this._error.set('Merci de renseigner une période.');
+      console.warn('[MatchesStore] blocked: missing dates');
       return;
     }
 
-    console.log('[MatchesStore] searchNow with filters', f);
+    // 👉 TEMP : autoriser sans pays pour debug
+    // if (!f.country) {
+    //   this._error.set('Merci de choisir un pays.');
+    //   console.warn('[MatchesStore] blocked: missing country');
+    //   return;
+    // }
 
     this._loading.set(true);
     this._error.set(null);
 
     this.api
       .searchFixtures(f)
-      .pipe(finalize(() => this._loading.set(false)))
+      .pipe(
+        finalize(() => {
+          this._loading.set(false);
+          console.log('[MatchesStore] loading=false');
+        })
+      )
       .subscribe({
         next: (matches) => {
           console.log(
-            '[MatchesStore] fixtures received:',
+            '[MatchesStore] fixtures received from ApiFootball =',
             matches?.length ?? 0
           );
 
@@ -132,6 +147,18 @@ export class MatchesStoreService {
           }));
 
           this.syncInfo();
+
+          if (safe.length === 0) {
+            console.warn(
+              '[MatchesStore] No matches for current filters',
+              this._filters()
+            );
+          } else {
+            console.log(
+              '[MatchesStore] First match sample:',
+              safe[0]
+            );
+          }
         },
         error: (err) => {
           console.error('[MatchesStore] search failed', err);
@@ -147,19 +174,20 @@ export class MatchesStoreService {
       });
   }
 
-  // ========== Sync info (bandeau récap) ==========
-
   private syncInfo() {
     const f = this._filters();
     const count = this._matches().length;
 
-    this._info.update((prev) => ({
-      ...prev,
+    const next: SearchInfo = {
+      ...this._info(),
       from: f.dateFrom ?? undefined,
       to: f.dateTo ?? undefined,
       country: f.country || undefined,
       city: f.city || undefined,
       count,
-    }));
+    };
+
+    this._info.set(next);
+    console.log('[MatchesStore] syncInfo ->', next);
   }
 }

@@ -1,5 +1,3 @@
-// src/app/core/api-football.service.ts
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filters, MatchLite } from './models';
@@ -40,78 +38,112 @@ interface ApiFootballCountriesResponse {
 @Injectable({ providedIn: 'root' })
 export class ApiFootballService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiFootballBaseUrl; // '/.netlify/functions/api-football'
+  private readonly baseUrl = environment.apiFootballBaseUrl;
 
-  /** Pays via proxy Netlify */
+  constructor() {
+    console.log(
+      '[ApiFootballService] constructed with baseUrl =',
+      this.baseUrl
+    );
+  }
+
+  /** Get countries */
   getCountries(): Observable<string[]> {
     if (!this.baseUrl) {
-      console.error('[ApiFootball] baseUrl is not set');
+      console.error('[ApiFootball] baseUrl is not set in environment');
       return of([]);
     }
 
-    return this.http
-      .get<ApiFootballCountriesResponse>(`${this.baseUrl}/countries`)
-      .pipe(
-        map((res) => {
-          const names =
-            res?.response?.map((c) => c.name).filter(Boolean) ?? [];
-          return Array.from(new Set(names)).sort((a, b) =>
-            a.localeCompare(b)
-          );
-        })
-      );
+    const url = `${this.baseUrl}/countries`;
+    console.log('[ApiFootball] getCountries ->', url);
+
+    return this.http.get<ApiFootballCountriesResponse>(url).pipe(
+      map((res) => {
+        const raw = res?.response || [];
+        console.log(
+          '[ApiFootball] getCountries raw length =',
+          raw.length
+        );
+
+        const names = raw
+          .map((c) => c.name)
+          .filter((n): n is string => !!n);
+
+        const unique = Array.from(new Set(names)).sort((a, b) =>
+          a.localeCompare(b)
+        );
+
+        console.log(
+          '[ApiFootball] getCountries unique length =',
+          unique.length
+        );
+
+        return unique;
+      })
+    );
   }
 
-  /** Fixtures via proxy Netlify + filtrage pays côté front */
+  /** Search fixtures for date range, filtered by country client-side */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
+    console.log('[ApiFootball] searchFixtures called with filters:', filters);
+
     const { dateFrom, dateTo, country } = filters;
 
     if (!dateFrom || !dateTo) {
-      console.warn('[ApiFootball] Missing dates', { dateFrom, dateTo });
+      console.warn(
+        '[ApiFootball] searchFixtures aborted: missing dates',
+        { dateFrom, dateTo }
+      );
+      return of([]);
+    }
+
+    if (!this.baseUrl) {
+      console.error('[ApiFootball] baseUrl is not set');
       return of([]);
     }
 
     const dates = this.buildDateRange(dateFrom, dateTo);
+    console.log('[ApiFootball] buildDateRange ->', dates);
+
     if (!dates.length) {
-      console.warn('[ApiFootball] Invalid date range', { dateFrom, dateTo });
+      console.warn(
+        '[ApiFootball] searchFixtures aborted: invalid date range',
+        { dateFrom, dateTo }
+      );
       return of([]);
     }
 
-    if (!this.baseUrl) {
-      console.error('[ApiFootball] baseUrl is not set');
-      return of([]);
-    }
-
-    // On limite à 14 jours max
     const safeDates = dates.slice(0, 14);
+    console.log('[ApiFootball] safeDates (max 14) ->', safeDates);
 
     const requests = safeDates.map((d) => {
       const params = new HttpParams()
         .set('date', d)
         .set('timezone', 'Europe/Paris');
 
-      // ⚠️ On ne passe pas country ici, on filtrera ensuite.
-      return this.http.get<ApiFootballFixtureResponse>(
-        `${this.baseUrl}/fixtures`,
-        { params }
-      );
+      const url = `${this.baseUrl}/fixtures`;
+      console.log('[ApiFootball] GET', url, 'params =', params.toString());
+
+      return this.http.get<ApiFootballFixtureResponse>(url, { params });
     });
+
+    if (requests.length === 0) {
+      console.warn('[ApiFootball] No dates to request');
+      return of([]);
+    }
 
     return forkJoin(requests).pipe(
       map((all) => {
-        const raw = all.flatMap((r) => r.response ?? []);
+        const allResponses = all || [];
+        const raw = allResponses.flatMap((r) => r?.response ?? []);
         console.log(
-          '[ApiFootball] Raw fixtures total for range',
-          dateFrom,
-          '→',
-          dateTo,
-          ':',
+          '[ApiFootball] Raw fixtures total for all days =',
           raw.length
         );
 
         const mapped: MatchLite[] = raw.map((fx) => {
           const iso = fx.fixture.date;
-          return {
+          const match: MatchLite = {
             id: String(fx.fixture.id),
             iso,
             date: iso.slice(0, 10),
@@ -123,7 +155,13 @@ export class ApiFootballService {
             city: fx.fixture.venue.city || undefined,
             country: fx.league.country,
           };
+          return match;
         });
+
+        console.log(
+          '[ApiFootball] Mapped fixtures length =',
+          mapped.length
+        );
 
         let filtered = mapped;
 
@@ -132,27 +170,49 @@ export class ApiFootballService {
           filtered = mapped.filter(
             (m) => (m.country || '').toLowerCase() === wanted
           );
+          console.log(
+            '[ApiFootball] After country filter =',
+            country,
+            '=>',
+            filtered.length
+          );
+        } else {
+          console.log(
+            '[ApiFootball] No country filter applied, using all fixtures'
+          );
         }
 
-        console.log(
-          '[ApiFootball] After country filter',
-          country || '(no country)',
-          ':',
-          filtered.length
-        );
-
-        return filtered.sort((a, b) =>
+        const sorted = filtered.sort((a, b) =>
           (a.iso || '').localeCompare(b.iso || '')
         );
+
+        console.log(
+          '[ApiFootball] Final fixtures returned =',
+          sorted.length
+        );
+
+        if (sorted.length > 0) {
+          console.log(
+            '[ApiFootball] Example fixture:',
+            sorted[0]
+          );
+        }
+
+        return sorted;
       })
     );
   }
 
-  /** Dates inclusives yyyy-MM-dd */
   private buildDateRange(from: string, to: string): string[] {
     const start = new Date(from);
     const end = new Date(to);
+
     if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) {
+      console.warn(
+        '[ApiFootball] buildDateRange invalid from/to',
+        from,
+        to
+      );
       return [];
     }
 
