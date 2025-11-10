@@ -1,5 +1,3 @@
-// netlify/functions/api-football.js
-
 const BASE_URL = 'https://v3.football.api-sports.io';
 
 export async function handler(event) {
@@ -14,8 +12,6 @@ export async function handler(event) {
       };
     }
 
-    // Ex: /.netlify/functions/api-football/countries
-    //     /.netlify/functions/api-football/fixtures
     const functionPrefix = '/.netlify/functions/api-football';
     const fullPath = event.path || '';
     const subPath = fullPath.startsWith(functionPrefix)
@@ -42,9 +38,7 @@ export async function handler(event) {
     }`;
 
     const response = await fetch(url, {
-      headers: {
-        'x-apisports-key': apiKey,
-      },
+      headers: { 'x-apisports-key': apiKey },
     });
 
     const data = await response.json();

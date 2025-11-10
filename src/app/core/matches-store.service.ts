@@ -5,37 +5,37 @@ import { Filters, MatchLite, CityCount, SearchInfo } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class MatchesStoreService {
-  private api = inject(ApiFootballService);
+  private readonly api = inject(ApiFootballService);
 
-  // état filtres
-  private _filters = signal<Filters>({
+  // ========== État filtres ==========
+  private readonly _filters = signal<Filters>({
     dateFrom: null,
     dateTo: null,
     country: '',
     city: '',
   });
 
-  // état données
-  private _matches = signal<MatchLite[]>([]);
-  private _loading = signal(false);
-  private _error = signal<string | null>(null);
-  private _info = signal<SearchInfo>({ count: 0 });
+  // ========== État données ==========
+  private readonly _matches = signal<MatchLite[]>([]);
+  private readonly _loading = signal(false);
+  private readonly _error = signal<string | null>(null);
+  private readonly _info = signal<SearchInfo>({ count: 0 });
 
-  /* ========= Getters utilisés dans le reste de l'app ========= */
+  // ========== Getters publics ==========
 
   filters(): Filters {
     return this._filters();
   }
 
-  loading() {
+  loading(): boolean {
     return this._loading();
   }
 
-  error() {
+  error(): string | null {
     return this._error();
   }
 
-  list() {
+  list(): MatchLite[] {
     return this._matches();
   }
 
@@ -56,7 +56,7 @@ export class MatchesStoreService {
     return this._info();
   }
 
-  /* ========= Mises à jour depuis les formulaires ========= */
+  // ========== Mises à jour filtres ==========
 
   updateDateFrom(dateFrom: string | null) {
     this._filters.update((f) => ({ ...f, dateFrom: dateFrom || null }));
@@ -74,7 +74,10 @@ export class MatchesStoreService {
   }
 
   updateCity(city: string | null | undefined) {
-    this._filters.update((f) => ({ ...f, city: city?.trim() || '' }));
+    this._filters.update((f) => ({
+      ...f,
+      city: city?.trim() || '',
+    }));
     this.syncInfo();
   }
 
@@ -85,21 +88,27 @@ export class MatchesStoreService {
       country: '',
       city: '',
     });
+
     this._matches.set([]);
     this._error.set(null);
     this._info.set({ count: 0 });
     this._loading.set(false);
+
+    this.syncInfo();
   }
 
-  /* ========= Action: lancer la recherche ========= */
+  // ========== Action: lancer la recherche ==========
 
   searchNow() {
     const f = this._filters();
 
     if (!f.dateFrom || !f.dateTo || !f.country) {
       this._error.set('Merci de renseigner une période et un pays.');
+      console.warn('[MatchesStore] searchNow blocked - missing filters', f);
       return;
     }
+
+    console.log('[MatchesStore] searchNow with filters', f);
 
     this._loading.set(true);
     this._error.set(null);
@@ -109,34 +118,48 @@ export class MatchesStoreService {
       .pipe(finalize(() => this._loading.set(false)))
       .subscribe({
         next: (matches) => {
-          this._matches.set(matches);
+          console.log(
+            '[MatchesStore] fixtures received:',
+            matches?.length ?? 0
+          );
+
+          const safe = matches || [];
+          this._matches.set(safe);
+
           this._info.update((i) => ({
             ...i,
-            count: matches.length,
+            count: safe.length,
           }));
+
+          this.syncInfo();
         },
         error: (err) => {
-          console.error(err);
+          console.error('[MatchesStore] search failed', err);
+
           this._matches.set([]);
           this._info.update((i) => ({ ...i, count: 0 }));
           this._error.set(
             "Impossible de charger les matches pour cette recherche."
           );
+
+          this.syncInfo();
         },
       });
   }
 
-  /* ========= Sync info affichée sous la barre ========= */
+  // ========== Sync info (bandeau récap) ==========
 
   private syncInfo() {
     const f = this._filters();
+    const count = this._matches().length;
+
     this._info.update((prev) => ({
       ...prev,
       from: f.dateFrom ?? undefined,
       to: f.dateTo ?? undefined,
       country: f.country || undefined,
       city: f.city || undefined,
-      count: this._matches().length,
+      count,
     }));
   }
 }

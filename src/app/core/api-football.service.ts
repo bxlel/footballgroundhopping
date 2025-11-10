@@ -39,10 +39,10 @@ interface ApiFootballCountriesResponse {
 export class ApiFootballService {
   private readonly http = inject(HttpClient);
 
-  // AUCUN fallback ici. Tu forces l'usage de la Netlify Function.
+  // On force l’usage du proxy Netlify.
   private readonly baseUrl = environment.apiFootballBaseUrl;
 
-  /** Get list of countries (via Netlify function) */
+  /** Récupère la liste des pays via la Netlify Function */
   getCountries(): Observable<string[]> {
     if (!this.baseUrl) {
       console.error('[ApiFootball] baseUrl is not set');
@@ -62,7 +62,7 @@ export class ApiFootballService {
       );
   }
 
-  /** Search fixtures by date range + optional country */
+  /** Recherche des matches par range de dates + pays (option ville) via le proxy */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
     const { dateFrom, dateTo, country } = filters;
 
@@ -105,6 +105,7 @@ export class ApiFootballService {
 
         const mapped: MatchLite[] = raw.map((fx) => {
           const iso = fx.fixture.date;
+
           return {
             id: String(fx.fixture.id),
             iso,
@@ -135,6 +136,7 @@ export class ApiFootballService {
     );
   }
 
+  /** Construit la liste des dates yyyy-MM-dd entre from et to (inclus) */
   private buildDateRange(from: string, to: string): string[] {
     const start = new Date(from);
     const end = new Date(to);
