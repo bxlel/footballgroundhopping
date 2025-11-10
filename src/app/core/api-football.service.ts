@@ -1,3 +1,5 @@
+// src/app/core/api-football.service.ts
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filters, MatchLite } from './models';
@@ -38,11 +40,9 @@ interface ApiFootballCountriesResponse {
 @Injectable({ providedIn: 'root' })
 export class ApiFootballService {
   private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiFootballBaseUrl; // '/.netlify/functions/api-football'
 
-  // On force l’usage du proxy Netlify.
-  private readonly baseUrl = environment.apiFootballBaseUrl;
-
-  /** Récupère la liste des pays via la Netlify Function */
+  /** Pays via proxy Netlify */
   getCountries(): Observable<string[]> {
     if (!this.baseUrl) {
       console.error('[ApiFootball] baseUrl is not set');
@@ -62,7 +62,7 @@ export class ApiFootballService {
       );
   }
 
-  /** Recherche des matches par range de dates + pays (option ville) via le proxy */
+  /** Fixtures via proxy Netlify + filtrage pays côté front */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
     const { dateFrom, dateTo, country } = filters;
 
@@ -82,17 +82,15 @@ export class ApiFootballService {
       return of([]);
     }
 
+    // On limite à 14 jours max
     const safeDates = dates.slice(0, 14);
 
     const requests = safeDates.map((d) => {
-      let params = new HttpParams()
+      const params = new HttpParams()
         .set('date', d)
         .set('timezone', 'Europe/Paris');
 
-      if (country && country.trim()) {
-        params = params.set('country', country.trim());
-      }
-
+      // ⚠️ On ne passe pas country ici, on filtrera ensuite.
       return this.http.get<ApiFootballFixtureResponse>(
         `${this.baseUrl}/fixtures`,
         { params }
@@ -102,10 +100,17 @@ export class ApiFootballService {
     return forkJoin(requests).pipe(
       map((all) => {
         const raw = all.flatMap((r) => r.response ?? []);
+        console.log(
+          '[ApiFootball] Raw fixtures total for range',
+          dateFrom,
+          '→',
+          dateTo,
+          ':',
+          raw.length
+        );
 
         const mapped: MatchLite[] = raw.map((fx) => {
           const iso = fx.fixture.date;
-
           return {
             id: String(fx.fixture.id),
             iso,
@@ -120,14 +125,21 @@ export class ApiFootballService {
           };
         });
 
-        const filtered =
-          country && country.trim()
-            ? mapped.filter(
-                (m) =>
-                  (m.country || '').toLowerCase() ===
-                  country.toLowerCase()
-              )
-            : mapped;
+        let filtered = mapped;
+
+        if (country && country.trim()) {
+          const wanted = country.trim().toLowerCase();
+          filtered = mapped.filter(
+            (m) => (m.country || '').toLowerCase() === wanted
+          );
+        }
+
+        console.log(
+          '[ApiFootball] After country filter',
+          country || '(no country)',
+          ':',
+          filtered.length
+        );
 
         return filtered.sort((a, b) =>
           (a.iso || '').localeCompare(b.iso || '')
@@ -136,7 +148,7 @@ export class ApiFootballService {
     );
   }
 
-  /** Construit la liste des dates yyyy-MM-dd entre from et to (inclus) */
+  /** Dates inclusives yyyy-MM-dd */
   private buildDateRange(from: string, to: string): string[] {
     const start = new Date(from);
     const end = new Date(to);
