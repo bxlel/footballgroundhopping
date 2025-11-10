@@ -1,7 +1,7 @@
 // src/app/core/api-football.service.ts
 
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filters, MatchLite } from './models';
 import { Observable, forkJoin, map, of } from 'rxjs';
 import { environment } from '@env/environment';
@@ -41,32 +41,26 @@ interface ApiFootballCountriesResponse {
 export class ApiFootballService {
   private http = inject(HttpClient);
 
-  // If you use proxy:
-  // "/api-football" -> "https://v3.football.api-sports.io"
-  // then apiFootballBaseUrl can be "/api-football" or empty + default below.
-  private baseUrl = environment.apiFootballBaseUrl || '/api-football';
-  private apiKey = environment.apiFootballKey;
+  /**
+   * Backend proxy:
+   * En prod (Netlify), on passe par la Function:
+   *   /.netlify/functions/api-football
+   *
+   * On laisse configurable via environment pour garder la flexibilité.
+   */
+  private readonly baseUrl =
+    environment.apiFootballBaseUrl || '/.netlify/functions/api-football';
 
-  /** Get list of countries from API-FOOTBALL (names in English) */
+  /** Get list of countries (proxied via Netlify Function) */
   getCountries(): Observable<string[]> {
-    if (!this.apiKey) {
-      console.error('[ApiFootball] Missing API key for getCountries');
-      return of([]);
-    }
-
-    const headers = new HttpHeaders({
-      'x-apisports-key': this.apiKey,
-    });
-
+    // Ici, plus de clé côté front.
     return this.http
-      .get<ApiFootballCountriesResponse>(`${this.baseUrl}/countries`, {
-        headers,
-      })
+      .get<ApiFootballCountriesResponse>(`${this.baseUrl}/countries`)
       .pipe(
         map((res) => {
           const names =
             res?.response?.map((c) => c.name).filter(Boolean) ?? [];
-          // unique + tri
+
           return Array.from(new Set(names)).sort((a, b) =>
             a.localeCompare(b)
           );
@@ -74,7 +68,7 @@ export class ApiFootballService {
       );
   }
 
-  /** Search fixtures by date range + optional country */
+  /** Search fixtures by date range + optional country (via backend proxy) */
   searchFixtures(filters: Filters): Observable<MatchLite[]> {
     const { dateFrom, dateTo, country } = filters;
 
@@ -84,40 +78,33 @@ export class ApiFootballService {
     }
 
     const dates = this.buildDateRange(dateFrom, dateTo);
-
     if (!dates.length) {
       console.warn('[ApiFootball] Invalid date range', { dateFrom, dateTo });
       return of([]);
     }
 
-    if (!this.apiKey) {
-      console.error('[ApiFootball] Missing API key for fixtures');
-      return of([]);
-    }
-
-    const headers = new HttpHeaders({
-      'x-apisports-key': this.apiKey,
-    });
-
-    // Limit to 14 days
+    // On limite à 14 jours comme avant
     const safeDates = dates.slice(0, 14);
 
     const requests = safeDates.map((d) => {
-      const params = new HttpParams()
+      let params = new HttpParams()
         .set('date', d)
         .set('timezone', 'Europe/Paris');
 
+      // Option 1 : filtrage pays côté backend (on passe le param)
+      if (country && country.trim()) {
+        params = params.set('country', country.trim());
+      }
+
       return this.http.get<ApiFootballFixtureResponse>(
         `${this.baseUrl}/fixtures`,
-        { headers, params }
+        { params }
       );
     });
 
     return forkJoin(requests).pipe(
       map((all) => {
         const raw = all.flatMap((r) => r.response ?? []);
-
-        console.log('[ApiFootball] Raw fixtures total:', raw.length);
 
         const mapped: MatchLite[] = raw.map((fx) => {
           const iso = fx.fixture.date;
@@ -135,6 +122,7 @@ export class ApiFootballService {
           };
         });
 
+        // Option 2 : garde aussi un filtre pays côté front au cas où
         const filtered =
           country && country.trim()
             ? mapped.filter(
@@ -143,11 +131,6 @@ export class ApiFootballService {
                   country.toLowerCase()
               )
             : mapped;
-
-        console.log(
-          '[ApiFootball] After country filter:',
-          filtered.length
-        );
 
         return filtered.sort((a, b) =>
           (a.iso || '').localeCompare(b.iso || '')
