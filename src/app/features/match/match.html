@@ -1,0 +1,130 @@
+@switch (state().status) {
+  @case ('missing') {
+    <app-not-found />
+  }
+  @case ('error') {
+    <div class="page">
+      <div class="notice notice--error">
+        <h1 class="notice__title">{{ t.loadError.title }}</h1>
+        <p>{{ t.loadError.body }}</p>
+      </div>
+    </div>
+  }
+  @case ('ready') {
+    @if (view(); as v) {
+      <article class="page match">
+        <header class="hero-band match__hero">
+          <p class="eyebrow">
+            {{ v.fixture.competition.name }}
+            @if (v.fixture.competition.country) {
+              · {{ v.fixture.competition.country }}
+            }
+          </p>
+          <h1 class="title match__teams">
+            <a class="match__team" [routerLink]="v.homeLink">
+              <app-crest
+                [name]="v.fixture.home.name"
+                [logoUrl]="v.fixture.home.logoUrl"
+                [size]="48"
+              />
+              {{ v.fixture.home.name }}
+            </a>
+            <span class="visually-hidden">{{ t.match.versus }}</span>
+            <a class="match__team" [routerLink]="v.awayLink">
+              <app-crest
+                [name]="v.fixture.away.name"
+                [logoUrl]="v.fixture.away.logoUrl"
+                [size]="48"
+              />
+              {{ v.fixture.away.name }}
+            </a>
+          </h1>
+          <p class="match__when" aria-hidden="true">
+            <span class="match__hour">{{ v.fixture.timeConfirmed ? v.time : '--:--' }}</span>
+            <span>{{ v.shortDay }}</span>
+          </p>
+        </header>
+
+        <dl class="match__facts">
+          <div class="panel">
+            <dt class="eyebrow">{{ t.match.page.kickoff }}</dt>
+            <dd>
+              {{ v.fullDate }}
+              @if (v.fixture.timeConfirmed) {
+                · <time [attr.datetime]="v.fixture.kickoffAt">{{ v.time }}</time> ({{
+                  v.zoneLabel
+                }})
+              }
+            </dd>
+          </div>
+          <div class="panel">
+            <dt class="eyebrow">{{ t.match.page.venue }}</dt>
+            <dd>
+              @if (v.venue; as venue) {
+                <a class="link" [routerLink]="v.venueLink">{{ venue.name }}</a>{{
+                  venue.city ? ', ' + venue.city : ''
+                }}
+              } @else {
+                {{ t.match.venueUnknown }}
+              }
+            </dd>
+          </div>
+        </dl>
+
+        <p class="match__tags">
+          @if (v.status) {
+            <p-tag severity="warn" [value]="v.status" />
+          }
+          @if (!v.fixture.timeConfirmed) {
+            <p-tag severity="warn" [value]="t.match.timeUnconfirmed" />
+          }
+          @if (v.level) {
+            <p-tag severity="secondary" [value]="v.level" />
+          }
+          @if (v.venue?.approximate) {
+            <p-tag severity="secondary" [value]="t.match.approximate" />
+          }
+        </p>
+
+        @if (v.upcoming) {
+          <section class="panel match__social">
+            <app-going-button [slug]="v.fixture.slug" [initialCount]="v.fixture.goingCount" />
+            <div class="match__share">
+              <app-share-button
+                [title]="v.fixture.home.name + ' – ' + v.fixture.away.name"
+                [text]="v.shareText"
+              />
+              <button pButton text type="button" (click)="downloadCalendar()">
+                {{ t.social.calendar }}
+              </button>
+            </div>
+          </section>
+        }
+
+        @if (v.venue) {
+          <div class="match__actions">
+            <a pButton size="large" [href]="v.google" target="_blank" rel="noopener">
+              {{ t.match.page.googleMaps }}
+            </a>
+            <a pButton outlined size="large" [href]="v.apple" target="_blank" rel="noopener">
+              {{ t.match.page.appleMaps }}
+            </a>
+          </div>
+          <ul class="match__links">
+            <li>
+              <a class="link" [routerLink]="v.venueLink">{{ t.match.page.seeVenue }}</a>
+            </li>
+            @if (v.around; as params) {
+              <li>
+                <a class="link" [routerLink]="tripRoute" [queryParams]="params">{{
+                  t.match.page.around
+                }}</a>
+              </li>
+            }
+          </ul>
+        }
+      </article>
+      <app-footer />
+    }
+  }
+}

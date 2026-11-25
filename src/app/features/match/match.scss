@@ -1,0 +1,121 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.match {
+  flex: 1;
+  max-width: 46rem;
+}
+
+.match__teams {
+  display: grid;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+
+.match__team {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  --crest-size: 3rem;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.match__when {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+  color: var(--on-hero-soft);
+  font-weight: 600;
+}
+
+.match__hour {
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-sm);
+  background: rgb(255 255 255 / 0.16);
+  color: var(--on-hero);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.match__facts {
+  display: grid;
+  gap: var(--s-3);
+  margin: var(--s-4) 0 0;
+
+  dd {
+    margin-top: var(--s-1);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+}
+
+.match__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.match__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+.match__links {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+  }
+}
+
+@media (min-width: 40rem) {
+  .match__facts {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 30rem) {
+  .match__actions .p-button {
+    width: 100%;
+  }
+}
+
+// « J'y vais », partage et calendrier.
+.match__social {
+  display: grid;
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+}
+
+.match__share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}

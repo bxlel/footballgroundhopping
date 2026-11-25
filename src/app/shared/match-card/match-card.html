@@ -1,0 +1,76 @@
+@let match = fixture();
+<article class="mc">
+  <div class="mc__time">
+    @if (match.timeConfirmed) {
+      <time class="mc__hour" [attr.datetime]="match.kickoffAt">{{ time() }}</time>
+    } @else {
+      <span class="mc__hour mc__hour--tbc" aria-hidden="true">--:--</span>
+    }
+    @if (showDay()) {
+      <span class="mc__day">{{ day() }}</span>
+    }
+    @if (match.timeConfirmed && !zone()) {
+      <span class="mc__day">{{ t.match.utcTime }}</span>
+    }
+  </div>
+
+  <div class="mc__body">
+    <h3 class="mc__teams">
+      <!-- Le nom accessible du lien est son texte visible : « Lens contre Lille ». -->
+      <a class="mc__link" [routerLink]="link()">
+        <span class="mc__team">
+          <app-crest [name]="match.home.name" [logoUrl]="match.home.logoUrl" />
+          {{ match.home.name }}
+        </span>
+        <span class="visually-hidden">{{ t.match.versus }}</span>
+        <span class="mc__team">
+          <app-crest [name]="match.away.name" [logoUrl]="match.away.logoUrl" />
+          {{ match.away.name }}
+        </span>
+      </a>
+    </h3>
+    <p class="mc__meta">
+      {{ match.competition.name }}
+      @if (match.competition.country) {
+        · {{ match.competition.country }}
+      }
+    </p>
+    <p class="mc__venue">{{ venueLine() }}</p>
+    <p class="mc__tags">
+      @if (status()) {
+        <p-tag severity="warn" [value]="status()" />
+      }
+      @if (!match.timeConfirmed) {
+        <p-tag severity="warn" [value]="t.match.timeUnconfirmed" />
+      }
+      @if (level()) {
+        <p-tag severity="secondary" [value]="level()" />
+      }
+      @if (match.goingCount > 0) {
+        <p-tag class="mc__going" [value]="t.social.countShort(match.goingCount)" />
+      }
+      @if (match.venue?.approximate) {
+        <p-tag severity="secondary" [value]="t.match.approximate" />
+      }
+    </p>
+  </div>
+
+  @if (distance() || directions()) {
+    <div class="mc__side">
+      @if (distance()) {
+        <span class="mc__distance">{{ distance() }}</span>
+      }
+      @if (directions(); as url) {
+        <a
+          class="mc__directions"
+          [href]="url"
+          target="_blank"
+          rel="noopener"
+          [attr.aria-label]="t.match.directionsTo(match.venue?.name ?? '')"
+        >
+          {{ t.match.directions }}
+        </a>
+      }
+    </div>
+  }
+</article>

@@ -1,0 +1,180 @@
+// Briques du site : réglages des composants PrimeNG et quelques classes maison.
+// PrimeNG vit dans une couche CSS (voir app.config.ts) : ces règles l'emportent d'office.
+
+// ---------- Boutons PrimeNG ----------
+.p-button {
+  min-height: var(--tap);
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+}
+
+// L'action principale porte le dégradé de la marque.
+.p-button:not(.p-button-outlined, .p-button-text, .p-button-secondary) {
+  border-color: transparent;
+  background: var(--gradient);
+  color: var(--on-brand);
+  box-shadow: var(--glow);
+
+  &:not(:disabled):hover {
+    border-color: transparent;
+    background: var(--gradient);
+    color: var(--on-brand);
+    filter: brightness(1.08);
+  }
+}
+
+.p-button.p-button-outlined {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.p-button.p-button-text {
+  min-height: 2.25rem;
+  color: var(--brand);
+}
+
+// ---------- Choix exclusifs (dates, rayon) : des pastilles qui passent à la ligne ----------
+.p-selectbutton {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.p-selectbutton .p-togglebutton {
+  flex: none;
+  min-height: 2.5rem;
+  padding: 0 var(--s-4);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+
+  &::before {
+    display: none;
+  }
+
+  &:not(.p-togglebutton-checked):hover {
+    border-color: var(--brand);
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  &.p-togglebutton-checked {
+    border-color: transparent;
+    background: var(--gradient);
+    color: var(--on-brand);
+  }
+}
+
+.p-selectbutton .p-togglebutton-content {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.p-selectbutton .p-togglebutton-checked .p-togglebutton-content,
+.p-selectbutton .p-togglebutton-checked .p-togglebutton-label {
+  background: transparent;
+  color: var(--on-brand);
+}
+
+// ---------- Champs ----------
+.p-inputtext {
+  min-height: var(--tap);
+  border-radius: var(--r-sm);
+}
+
+// ---------- Puce de filtre (bouton à bascule maison) ----------
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 var(--s-3);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+
+  &:hover {
+    border-color: var(--brand);
+  }
+
+  &[aria-pressed='true'] {
+    border-color: var(--brand);
+    background: var(--brand-tint);
+    color: var(--brand-strong);
+  }
+}
+
+// ---------- Étiquettes PrimeNG ----------
+.p-tag {
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.p-tag.p-tag-secondary {
+  background: var(--surface-2);
+  color: var(--ink-soft);
+}
+
+.p-tag.p-tag-warn {
+  background: var(--amber-tint);
+  color: var(--amber);
+}
+
+// ---------- Carte de contenu ----------
+.panel {
+  padding: var(--s-5);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+// ---------- Bandeau en dégradé des pages ----------
+.hero-band {
+  padding: var(--s-6) var(--s-5);
+  border-radius: var(--r-lg);
+  background: var(--gradient-hero);
+  color: var(--on-hero);
+  box-shadow: var(--shadow-2);
+
+  .eyebrow {
+    color: var(--on-hero-soft);
+  }
+}
+
+// ---------- Messages (cas vides, erreurs) ----------
+.notice {
+  padding: var(--s-5);
+  border: 1px dashed var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.notice--error {
+  border: 1px solid var(--danger);
+  background: var(--danger-tint);
+}
+
+.notice__title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+}

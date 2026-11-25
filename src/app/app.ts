@@ -1,17 +1,33 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MESSAGES } from './core/i18n/messages';
 import { HeaderComponent } from './shared/header/header';
-import { FooterComponent } from './shared/footer/footer';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [RouterOutlet, HeaderComponent],
   template: `
-    <app-header></app-header>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
+    <a class="skip-link" href="#contenu">{{ t.nav.skip }}</a>
+    <app-header />
+    <main id="contenu" tabindex="-1">
+      <router-outlet />
+    </main>
   `,
+  styles: `
+    :host {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      outline: none;
+    }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {}
+export class AppComponent {
+  protected readonly t = inject(MESSAGES);
+}

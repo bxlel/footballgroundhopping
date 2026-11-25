@@ -1,56 +1,106 @@
-/* ===== Design Tokens (Football GH) ===== */
+// Design tokens — identité « nuit violette ».
+// Des surfaces claires et calmes, et le violet de la marque en dégradé pour ce qui compte :
+// l'accueil, les bandeaux des pages, l'action principale, les repères de la carte.
+// Les couples texte/fond respectent le contraste AA (voir docs/DECISIONS.md).
+// Les composants PrimeNG prennent leurs couleurs dans src/app/theme.ts, accordé à ces tokens.
+
 :root {
-  /* Brand */
-  --brand-900: #0e2a47;  /* navy */
-  --brand-700: #1a3d5f;
-  --brand-500: #26486e;  /* denim (déjà utilisé) */
-  --brand-300: #84a2c4;
-  --brand-100: #e7effa;
+  color-scheme: light dark;
 
-  /* Accents */
-  --accent-1: #43c7ff;  /* cyan */
-  --accent-2: #2ee6a6;  /* mint/green */
+  // Surfaces et texte — thème clair
+  --bg: #f6f4fd;
+  --surface: #ffffff;
+  --surface-2: #f1edfb;
+  --ink: #1b1235;
+  --ink-soft: #5d5578;
+  --line: #e4def4;
 
-  /* Feedback */
-  --ok: #22c55e;
-  --warn: #f59e0b;
-  --err: #ef4444;
+  // Marque
+  --brand: #6d28d9;
+  --brand-strong: #5b21b6;
+  --brand-tint: #ede9fe;
+  --on-brand: #ffffff;
+  // Dégradé des actions : chaque arrêt garde un contraste AA avec du texte blanc.
+  --gradient: linear-gradient(135deg, #5b21b6 0%, #7c3aed 55%, #9333ea 100%);
+  // Dégradé des bandeaux : plus profond, avec deux halos.
+  --gradient-hero:
+    radial-gradient(90% 120% at 100% 0%, rgb(126 34 206 / 0.9) 0%, transparent 60%),
+    radial-gradient(70% 90% at 0% 100%, rgb(67 56 202 / 0.75) 0%, transparent 65%),
+    linear-gradient(150deg, #2e1065 0%, #4c1d95 55%, #6d28d9 100%);
+  --on-hero: #ffffff;
+  --on-hero-soft: #e9d5ff;
+  --glow: 0 10px 30px rgb(109 40 217 / 0.28);
 
-  /* Neutrals */
-  --bg: #0b1220;       /* deep bg */
-  --panel: #101a2b;    /* cards */
-  --panel-2: #0f1626;  /* alt panel */
-  --text: #eaf2ff;     /* primary text */
-  --muted: #a6b3c6;    /* secondary text */
-  --border: #233048;   /* subtle border */
+  // États
+  --amber: #7a4f00;
+  --amber-tint: #fdeec8;
+  --danger: #a3221b;
+  --danger-tint: #fbe4e1;
+  --focus: #6d28d9;
 
-  /* Shadows */
-  --shadow-1: 0 10px 25px rgba(0,0,0,.25);
-  --shadow-2: 0 16px 40px rgba(10, 26, 60, .45);
+  // Typographie
+  --font-text:
+    'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.875rem;
+  --fs-display: clamp(2.25rem, 8.5vw, 4rem);
+  --lh-tight: 1.1;
+  --lh-text: 1.55;
 
-  /* Radii & spacing */
-  --r-lg: 16px;
-  --r-xl: 20px;
-  --r-2xl: 24px;
-  --space-1: 6px;
-  --space-2: 10px;
-  --space-3: 14px;
-  --space-4: 18px;
-  --space-6: 24px;
+  // Espacements (base 4 px)
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4.5rem;
 
-  /* Typography */
-  --font-ui: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-  --font-heading: "Outfit", var(--font-ui);
+  // Rayons : généreux
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+
+  // Ombres douces, teintées de violet
+  --shadow-1: 0 1px 2px rgb(27 18 53 / 0.06), 0 4px 14px rgb(27 18 53 / 0.06);
+  --shadow-2: 0 2px 6px rgb(27 18 53 / 0.08), 0 18px 40px rgb(76 29 149 / 0.16);
+  --sheet-shadow: 0 -10px 30px rgb(27 18 53 / 0.2);
+
+  // Mise en page
+  --page-max: 68rem;
+  --page-pad: clamp(1rem, 4vw, 2rem);
+  --header-h: 3.75rem;
+  --tap: 2.75rem;
 }
 
-/* Light mode option (si besoin plus tard) */
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #f8fafc;
-    --panel: #ffffff;
-    --panel-2: #f3f6fb;
-    --text: #0e1726;
-    --muted: #475569;
-    --border: #dbe3f1;
+    --bg: #0e0a1d;
+    --surface: #181230;
+    --surface-2: #211a40;
+    --ink: #f4f0ff;
+    --ink-soft: #b5accf;
+    --line: #2f2752;
+
+    --brand: #b79cff;
+    --brand-strong: #d0bfff;
+    --brand-tint: #2a1f55;
+    --glow: 0 10px 30px rgb(124 58 237 / 0.4);
+
+    --amber: #ffcf66;
+    --amber-tint: #33270a;
+    --danger: #ff9a92;
+    --danger-tint: #3a1512;
+    --focus: #b79cff;
+
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 14px rgb(0 0 0 / 0.25);
+    --shadow-2: 0 2px 6px rgb(0 0 0 / 0.35), 0 18px 40px rgb(0 0 0 / 0.4);
   }
 }

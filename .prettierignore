@@ -1,0 +1,8 @@
+dist
+node_modules
+coverage
+.angular
+package-lock.json
+test-results
+playwright-report
+tmp
