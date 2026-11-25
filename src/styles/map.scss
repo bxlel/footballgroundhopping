@@ -1,0 +1,70 @@
+// Feuille de style de la carte, chargée à la demande avec MapLibre (voir shared/map/map-view.ts).
+@use 'maplibre-gl/dist/maplibre-gl.css';
+
+// Repère d'un stade : une pastille en dégradé portant le nombre de matchs.
+.pin {
+  display: grid;
+  place-items: center;
+  min-width: 2.125rem;
+  height: 2.125rem;
+  padding: 0 0.375rem;
+  border: 2.5px solid #ffffff;
+  border-radius: 999px;
+  background: var(--gradient);
+  color: #ffffff;
+  font-family: var(--font-text);
+  font-weight: 800;
+  font-size: 0.9375rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgb(76 29 149 / 0.45);
+
+  // Au-dessus du point de départ, qui peut se trouver tout près d'un stade.
+  &.maplibregl-marker {
+    z-index: 1;
+  }
+}
+
+.pin--approx {
+  border-style: dashed;
+}
+
+.pin--active.maplibregl-marker,
+.pin.maplibregl-marker:hover,
+.pin.maplibregl-marker:focus-visible {
+  z-index: 2;
+}
+
+.pin--active,
+.pin:hover,
+.pin:focus-visible {
+  // Pas de transform ici : MapLibre s'en sert pour placer le repère.
+  background: #1b1235;
+  box-shadow:
+    0 0 0 5px rgb(124 58 237 / 0.4),
+    0 4px 12px rgb(27 18 53 / 0.5);
+}
+
+.pin:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+// Point de départ de la recherche.
+.pin-origin {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 3px solid #7c3aed;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 6px rgb(124 58 237 / 0.22);
+}
+
+.maplibregl-ctrl-attrib {
+  font-family: var(--font-text);
+}
+
+.maplibregl-ctrl-group {
+  border-radius: 12px;
+  overflow: hidden;
+}

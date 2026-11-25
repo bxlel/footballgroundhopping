@@ -1,0 +1,75 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.venue {
+  flex: 1;
+}
+
+.venue__name {
+  margin-top: var(--s-2);
+  overflow-wrap: anywhere;
+}
+
+.venue__top {
+  display: grid;
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+}
+
+.venue__info {
+  display: grid;
+  gap: var(--s-4);
+  align-content: start;
+}
+
+.venue__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: var(--s-3);
+  margin: 0;
+
+  .panel {
+    padding: var(--s-4);
+  }
+
+  dd {
+    margin-top: var(--s-1);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+  }
+}
+
+.venue__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.venue__map {
+  height: 18rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+}
+
+.venue__section {
+  display: grid;
+  gap: var(--s-3);
+  margin-top: var(--s-7);
+}
+
+@media (min-width: 900px) {
+  .venue__top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+
+  .venue__map {
+    height: 100%;
+    min-height: 22rem;
+  }
+}

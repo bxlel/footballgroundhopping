@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+.sf {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.sf__where {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.sf__locate {
+  flex: none;
+}
+
+.sf__group {
+  display: grid;
+  gap: var(--s-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.sf__legend {
+  padding: 0;
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.sf__dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+
+.sf__date {
+  display: grid;
+  gap: var(--s-1);
+  min-width: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+
+  input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.sf__hint {
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+}

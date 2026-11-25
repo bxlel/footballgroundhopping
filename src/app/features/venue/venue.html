@@ -1,0 +1,86 @@
+@switch (state().status) {
+  @case ('missing') {
+    <app-not-found />
+  }
+  @case ('error') {
+    <div class="page">
+      <div class="notice notice--error">
+        <h1 class="notice__title">{{ t.loadError.title }}</h1>
+        <p>{{ t.loadError.body }}</p>
+      </div>
+    </div>
+  }
+  @case ('ready') {
+    @if (view(); as v) {
+      <article class="page venue">
+        <header class="hero-band">
+          @if (v.place) {
+            <p class="eyebrow">{{ v.place }}</p>
+          }
+          <h1 class="title venue__name">{{ v.venue.name }}</h1>
+        </header>
+
+        <div class="venue__top">
+          <div class="venue__info">
+            <dl class="venue__facts">
+              @if (v.venue.address) {
+                <div class="panel">
+                  <dt class="eyebrow">{{ t.venue.page.address }}</dt>
+                  <dd>{{ v.venue.address }}</dd>
+                </div>
+              }
+              @if (v.capacity) {
+                <div class="panel">
+                  <dt class="eyebrow">{{ t.venue.page.capacity }}</dt>
+                  <dd>{{ v.capacity }}</dd>
+                </div>
+              }
+              @if (v.surface) {
+                <div class="panel">
+                  <dt class="eyebrow">{{ t.venue.page.surface }}</dt>
+                  <dd>{{ v.surface }}</dd>
+                </div>
+              }
+            </dl>
+            <div class="venue__actions">
+              <a pButton size="large" [href]="v.directions" target="_blank" rel="noopener">
+                {{ t.match.directions }}
+              </a>
+              <app-share-button size="large" [title]="v.venue.name" />
+              @if (v.venue.approximate) {
+                <p-tag severity="secondary" [value]="t.match.approximate" />
+              }
+            </div>
+          </div>
+
+          @if (v.markers.length) {
+            <app-map-view
+              class="venue__map"
+              lazy
+              [label]="t.venue.page.mapLabel(v.venue.name)"
+              [markers]="v.markers"
+            />
+          }
+        </div>
+
+        <section class="venue__section">
+          <h2 class="subtitle">{{ t.venue.page.upcoming }}</h2>
+          <app-fixture-list [fixtures]="v.fixtures" [emptyText]="t.venue.page.noUpcoming" />
+          @if (v.around; as params) {
+            <p>
+              <a class="link" [routerLink]="tripRoute" [queryParams]="params">{{
+                t.venue.page.around
+              }}</a>
+            </p>
+          }
+        </section>
+
+        <section class="venue__section">
+          <h2 class="subtitle">{{ t.venue.page.practical }}</h2>
+          <p class="notice">{{ t.venue.page.practicalSoon }}</p>
+        </section>
+      </article>
+      <app-footer />
+    }
+  }
+}

@@ -1,120 +1,59 @@
-:host,
-.home-hero {
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.home {
+  flex: 1;
+  padding-bottom: var(--s-7);
+}
+
+.home__inner {
+  width: min(42rem, 100%);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+
+// Bandeau en dégradé : la promesse en grand, le formulaire à cheval dessus.
+.home__hero {
+  padding: var(--s-7) 0 calc(var(--s-8) + var(--s-5));
+  background: var(--gradient-hero);
+  color: var(--on-hero);
+}
+
+.home__accent {
   display: block;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #0f172a 0, #020817 55%, #000 100%);
-  color: #e2e8f0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--on-hero-soft);
 }
 
-.home-inner {
-  width: min(900px, 92vw);
-  margin: 0 auto;
-  padding: 48px 16px 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.home__lead {
+  max-width: 32rem;
+  margin-top: var(--s-4);
+  font-size: var(--fs-lg);
+  line-height: 1.45;
+  color: var(--on-hero-soft);
 }
 
-/* Titre + intro */
-h1 {
-  font-size: 2.4rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #5bb4ff, #7c7bff);
-  -webkit-background-clip: text;
-  color: transparent;
+.home__form {
+  margin-top: calc(var(--s-8) * -1);
+  padding: var(--s-5);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
 }
 
-.tagline {
-  font-size: 1rem;
-  color: #cbd5f5;
+@media (max-width: 30rem) {
+  .home__hero {
+    padding-top: var(--s-6);
+  }
+
+  .home__form {
+    padding: var(--s-4);
+  }
 }
 
-.desc {
-  font-size: 0.9rem;
-  color: #9ca3af;
-  max-width: 640px;
-}
-
-/* Blocs explicatifs en mini glass */
-.concept,
-.why {
-  margin-top: 4px;
-  padding: 14px 14px 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(124, 123, 255, 0.16);
-  background:
-    radial-gradient(circle at top left, rgba(91, 180, 255, 0.12), transparent),
-    rgba(6, 10, 24, 0.9);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 720px;
-}
-
-.concept h2,
-.why h2 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #e5e7ff;
-}
-
-.concept p,
-.why p {
-  font-size: 0.86rem;
-  color: #9ca3af;
-}
-
-/* Boutons (même style que sur Explorer) */
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.btn {
-  padding: 9px 18px;
-  border-radius: 999px;
-  font-size: 0.83rem;
-  font-weight: 600;
-  border: 1px solid transparent;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.14s ease;
-}
-
-.btn.primary {
-  color: #ffffff;
-  background: linear-gradient(135deg, #5bb4ff, #7c7bff);
-  box-shadow: 0 8px 18px rgba(3, 7, 18, 0.9);
-}
-
-.btn.primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 11px 24px rgba(3, 7, 18, 1);
-}
-
-.btn.ghost {
-  color: #e5e7eb;
-  background: transparent;
-  border-color: rgba(148, 163, 253, 0.35);
-}
-
-.btn.ghost:hover {
-  background: rgba(15, 23, 42, 0.96);
-}
-
-/* Note API */
-.note {
-  margin-top: 8px;
-  font-size: 0.75rem;
-  color: #9ca3af;
+.home__placeholder {
+  min-height: 26rem;
 }

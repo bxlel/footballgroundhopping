@@ -1,0 +1,146 @@
+<div class="trip">
+  <app-map-view
+    class="trip__map"
+    [label]="t.map.label"
+    [markers]="store.markers()"
+    [origin]="store.query()?.origin ?? null"
+    [radiusKm]="store.query()?.radiusKm ?? null"
+    [activeId]="store.activeVenue()"
+    [bottomInset]="mapInset()"
+    (markerHover)="store.setActiveVenue($event)"
+    (markerSelect)="onMarkerSelect($event)"
+  />
+
+  <section
+    #panel
+    class="trip__panel"
+    [attr.data-sheet]="sheet()"
+    [class.is-dragging]="dragHeight() !== null"
+    [style.height.px]="dragHeight()"
+  >
+    <button
+      type="button"
+      class="trip__handle"
+      [attr.aria-label]="sheet() === 'peek' ? t.trip.sheet.showList : t.trip.sheet.showMap"
+      [attr.aria-expanded]="sheet() !== 'peek'"
+      (pointerdown)="onHandleDown($event)"
+      (pointermove)="onHandleMove($event)"
+      (pointerup)="onHandleUp()"
+      (pointercancel)="onHandleUp()"
+      (click)="toggleSheet()"
+    >
+      <span class="trip__grip" aria-hidden="true"></span>
+    </button>
+
+    <header class="trip__head">
+      <h1 class="trip__title">{{ title() }}</h1>
+      <p class="trip__summary" role="status" aria-live="polite">{{ summary() }}</p>
+      @if (store.query()) {
+        <button
+          pButton
+          text
+          size="small"
+          type="button"
+          class="trip__edit"
+          [attr.aria-label]="t.search.editLabel"
+          [attr.aria-expanded]="editing()"
+          (click)="editing.set(!editing())"
+        >
+          {{ t.search.edit }}
+        </button>
+      }
+    </header>
+
+    <div #list class="trip__scroll">
+      @if (editing() || !store.query()) {
+        <div class="trip__form">
+          @if (!store.query()) {
+            <p class="trip__lead">{{ t.trip.noQuery.body }}</p>
+          }
+          <app-search-form [initial]="store.query()" (submitted)="onSearch($event)" />
+        </div>
+      }
+
+      @if (store.status() === 'ready' && store.total() > 0) {
+        <app-trip-filters
+          [filters]="store.filters()"
+          [levels]="store.levels()"
+          [countries]="store.countries()"
+          (filtersChange)="store.setFilters($event)"
+        />
+      }
+
+      @switch (store.status()) {
+        @case ('loading') {
+          <div class="trip__skeleton" aria-hidden="true">
+            <p-skeleton height="7rem" borderRadius="16px" />
+            <p-skeleton height="7rem" borderRadius="16px" />
+            <p-skeleton height="7rem" borderRadius="16px" />
+          </div>
+        }
+        @case ('error') {
+          <div class="notice notice--error trip__notice">
+            <h2 class="notice__title">{{ t.trip.error.title }}</h2>
+            <p>{{ t.trip.error.body }}</p>
+            <div class="notice__actions">
+              <button pButton type="button" (click)="store.retry()">
+                {{ t.trip.error.retry }}
+              </button>
+            </div>
+          </div>
+        }
+        @case ('ready') {
+          @if (store.total() === 0) {
+            <div class="notice trip__notice">
+              <h2 class="notice__title">{{ t.trip.empty.title }}</h2>
+              <p>{{ t.trip.empty.body }}</p>
+              <div class="notice__actions">
+                @if (widerRadius(); as km) {
+                  <button pButton type="button" (click)="widen(km)">
+                    {{ t.trip.empty.widen(km) }}
+                  </button>
+                }
+                @if (canExtendDates()) {
+                  <button pButton outlined type="button" (click)="extendDates()">
+                    {{ t.trip.empty.week }}
+                  </button>
+                }
+              </div>
+            </div>
+          } @else if (store.visible().length === 0) {
+            <div class="notice trip__notice">
+              <h2 class="notice__title">{{ t.trip.emptyFiltered.title }}</h2>
+              <p>{{ t.trip.emptyFiltered.body }}</p>
+              <div class="notice__actions">
+                <button pButton type="button" (click)="store.clearFilters()">
+                  {{ t.trip.emptyFiltered.clear }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            @if (stale(); as hours) {
+              <p class="trip__stale" role="note">{{ t.trip.stale(hours) }}</p>
+            }
+            <div [attr.aria-label]="t.trip.listLabel" role="region">
+              @for (group of store.days(); track group.day) {
+                <h2 class="trip__day">{{ dayHeading(group.day) }}</h2>
+                <ul class="trip__cards">
+                  @for (fixture of group.fixtures; track fixture.id) {
+                    <li [id]="'match-' + fixture.id">
+                      <app-match-card
+                        [fixture]="fixture"
+                        [showDay]="false"
+                        [active]="!!fixture.venue && fixture.venue.slug === store.activeVenue()"
+                        (highlight)="onCardHighlight($event)"
+                      />
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+  </section>
+</div>

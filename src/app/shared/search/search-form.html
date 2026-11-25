@@ -1,0 +1,80 @@
+<form class="sf" novalidate [attr.aria-label]="t.search.legend" (submit)="onSubmit($event)">
+  <app-field [label]="t.search.where" [for]="whereId" [error]="error()">
+    <div class="sf__where">
+      <app-place-input
+        [inputId]="whereId"
+        [text]="text()"
+        [invalid]="!!error()"
+        (textChange)="onTextChange($event)"
+        (picked)="onPicked($event)"
+      />
+      <button
+        pButton
+        outlined
+        type="button"
+        class="sf__locate"
+        [disabled]="busy() === 'locating'"
+        (click)="aroundMe()"
+      >
+        {{ busy() === 'locating' ? t.search.locating : t.search.aroundMe }}
+      </button>
+    </div>
+  </app-field>
+
+  <fieldset class="sf__group">
+    <legend class="sf__legend">{{ t.search.when }}</legend>
+    <p-selectbutton
+      optionLabel="label"
+      optionValue="value"
+      [options]="whenOptions"
+      [ngModel]="whenChoice()"
+      [ngModelOptions]="{ standalone: true }"
+      [allowEmpty]="false"
+      (ngModelChange)="chooseWhen($event)"
+    />
+    @if (customDates()) {
+      <div class="sf__dates">
+        <label class="sf__date">
+          <span>{{ t.search.from }}</span>
+          <input
+            pInputText
+            type="date"
+            [value]="period().from"
+            [min]="today"
+            [max]="maxDate"
+            (change)="onDate('from', $event)"
+          />
+        </label>
+        <label class="sf__date">
+          <span>{{ t.search.to }}</span>
+          <input
+            pInputText
+            type="date"
+            [value]="period().to"
+            [min]="period().from"
+            [max]="maxDate"
+            (change)="onDate('to', $event)"
+          />
+        </label>
+      </div>
+    }
+  </fieldset>
+
+  <fieldset class="sf__group">
+    <legend class="sf__legend">{{ t.search.howFar }}</legend>
+    <p-selectbutton
+      optionLabel="label"
+      optionValue="value"
+      [options]="radiusChoices"
+      [ngModel]="radiusKm()"
+      [ngModelOptions]="{ standalone: true }"
+      [allowEmpty]="false"
+      (ngModelChange)="radiusKm.set($event)"
+    />
+    <p class="sf__hint">{{ t.search.radiusHint }}</p>
+  </fieldset>
+
+  <button pButton type="submit" size="large" [fluid]="true" [disabled]="busy() === 'searching'">
+    {{ t.search.submit }}
+  </button>
+</form>

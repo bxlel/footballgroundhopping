@@ -1,0 +1,153 @@
+:host {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+:host(.is-active),
+:host(:hover) {
+  border-color: var(--brand);
+  box-shadow: var(--glow);
+}
+
+.mc {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: var(--s-2) var(--s-4);
+  padding: var(--s-4);
+}
+
+// L'heure, dans une pastille teintée : c'est ce qu'on cherche en premier.
+.mc__time {
+  display: grid;
+  gap: var(--s-1);
+  align-content: start;
+  justify-items: center;
+  grid-row: span 2;
+}
+
+.mc__hour {
+  width: 100%;
+  padding: var(--s-2) 0;
+  border-radius: var(--r-sm);
+  background: var(--brand-tint);
+  color: var(--brand-strong);
+  font-weight: 800;
+  font-size: var(--fs-lg);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.mc__hour--tbc {
+  background: var(--amber-tint);
+  color: var(--amber);
+}
+
+.mc__day {
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mc__teams {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.mc__link {
+  display: grid;
+  gap: var(--s-1);
+  text-decoration: none;
+
+  // Toute la carte est cliquable, sans imbriquer de liens.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r-md);
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.mc__team {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mc__meta,
+.mc__venue {
+  margin-top: var(--s-1);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+}
+
+.mc__venue {
+  margin-top: 0;
+  color: var(--ink);
+}
+
+.mc__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-top: var(--s-2);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.mc__side {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--line);
+}
+
+.mc__distance {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.mc__directions {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  margin-block: calc(var(--s-2) * -1);
+  margin-left: auto;
+  padding-inline: var(--s-2);
+  color: var(--brand);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+
+  &:hover {
+    color: var(--brand-strong);
+  }
+}

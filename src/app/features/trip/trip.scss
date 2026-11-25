@@ -1,0 +1,194 @@
+:host {
+  display: block;
+  flex: 1;
+  min-height: 0;
+}
+
+// La page occupe tout l'écran sous l'en-tête : la carte au fond, la liste par-dessus.
+.trip {
+  position: relative;
+  height: calc(100dvh - var(--header-h));
+  overflow: hidden;
+}
+
+.trip__map {
+  position: absolute;
+  inset: 0;
+}
+
+.trip__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  height: 56%;
+  max-height: 100%;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--bg);
+  box-shadow: var(--sheet-shadow);
+  transition: height 0.22s ease;
+
+  &[data-sheet='peek'] {
+    height: 152px;
+  }
+
+  &[data-sheet='full'] {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  &.is-dragging {
+    transition: none;
+  }
+}
+
+.trip__handle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+}
+
+.trip__grip {
+  width: 2.75rem;
+  height: 0.3125rem;
+  border-radius: var(--r-pill);
+  background: var(--ink-soft);
+}
+
+.trip__head {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-1) var(--s-3);
+  align-items: center;
+  padding: 0 var(--page-pad) var(--s-3);
+}
+
+.trip__title {
+  grid-column: 1 / -1;
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.trip__summary {
+  min-height: 1.5em;
+  color: var(--ink-soft);
+}
+
+.trip__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: var(--s-5);
+}
+
+.trip__form {
+  margin: 0 var(--page-pad) var(--s-4);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.trip__lead {
+  margin-bottom: var(--s-4);
+  color: var(--ink-soft);
+}
+
+.trip__notice {
+  margin: var(--s-2) var(--page-pad);
+}
+
+// Intertitre de journée : il reste visible pendant qu'on fait défiler ses matchs.
+.trip__day {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--page-pad);
+  background: var(--bg);
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  letter-spacing: -0.005em;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 0.375rem;
+    height: 1.125rem;
+    border-radius: var(--r-pill);
+    background: var(--gradient);
+  }
+}
+
+.trip__cards,
+.trip__skeleton {
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-1) var(--page-pad) var(--s-4);
+}
+
+@media (min-width: 900px) {
+  .trip {
+    display: grid;
+    grid-template-columns: 28rem minmax(0, 1fr);
+    // Sans cette ligne, la rangée prendrait la hauteur de la liste et la carte avec elle.
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .trip__map {
+    position: relative;
+    inset: auto;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .trip__panel,
+  .trip__panel[data-sheet] {
+    position: relative;
+    grid-column: 1;
+    grid-row: 1;
+    height: 100% !important;
+    border-radius: 0;
+    border-right: 1px solid var(--line);
+    box-shadow: none;
+  }
+
+  .trip__handle {
+    display: none;
+  }
+
+  .trip__head {
+    padding-top: var(--s-5);
+  }
+}
+
+.trip__stale {
+  margin: 0 var(--page-pad) var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-sm);
+  background: var(--amber-tint);
+  color: var(--amber);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
